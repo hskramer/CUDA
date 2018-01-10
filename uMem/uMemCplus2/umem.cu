@@ -113,7 +113,7 @@ void launch_by_value(DataElement elem) {
 
 int main(void)
 {
-	DataElement *e = new DataElement;
+	DataElement*  e = new DataElement;
 
 	e->value = 10;
 	e->name = "hello";
