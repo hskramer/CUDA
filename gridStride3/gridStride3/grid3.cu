@@ -58,7 +58,6 @@ int main(void)
 
 	checkCuda(cudaEventCreate(&start));
 	checkCuda(cudaEventCreate(&stop));
-	checkCuda(cudaEventRecord(start, 0));
 
 	checkCuda(cudaMallocManaged(&x, N * sizeof(float)));
 	checkCuda(cudaMallocManaged(&y, N * sizeof(float)));
@@ -70,13 +69,15 @@ int main(void)
 	
 	//The number of symmetrical multiprocessors times 64 ensures we launch the maximum number of warps per sm and maximizes memory coalescing
 	// and shows a simple method for handling arrays that are much larger than the maximum number of threads used or available even when using dim3
+	checkCuda(cudaEventRecord(start));
+
 	saxpy << <64 * numSM, 1024 >> > (N, 2.0f, x, y);
 
 	// Wait for gpu to finsih before allowing host to access the memory
 
 	cudaDeviceSynchronize();
 
-	checkCuda(cudaEventRecord(stop, 0));
+	checkCuda(cudaEventRecord(stop));
 	checkCuda(cudaEventSynchronize(stop));
 	checkCuda(cudaEventElapsedTime(&elapsed, start, stop));
 
@@ -87,6 +88,8 @@ int main(void)
 
 	printf("Max error: %f\n", maxError);
 	printf("Time to calculate: %3.2fms, this does not include any cpu time.\n", elapsed);
+	printf("Effective Bandwidth (GB/s): %f\n", N * 4 * 3 /elapsed/ 1e6); // measure just the saxpy kernel
+
 
 	checkCuda(cudaEventDestroy(start));
 	checkCuda(cudaEventDestroy(stop));

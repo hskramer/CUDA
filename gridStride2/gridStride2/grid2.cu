@@ -43,7 +43,7 @@ int main(void)
 
 	checkCuda(cudaEventCreate(&start));
 	checkCuda(cudaEventCreate(&stop));
-	checkCuda(cudaEventRecord(start, 0));
+	checkCuda(cudaEventRecord(start));
 
 	checkCuda(cudaMallocManaged(&x, N * sizeof(float)));
 	checkCuda(cudaMallocManaged(&y, N * sizeof(float)));
@@ -65,7 +65,7 @@ int main(void)
 
 	cudaDeviceSynchronize();
 
-	checkCuda(cudaEventRecord(stop, 0));
+	checkCuda(cudaEventRecord(stop));
 	checkCuda(cudaEventSynchronize(stop));
 	checkCuda(cudaEventElapsedTime(&elapsed, start, stop));
 
@@ -76,6 +76,8 @@ int main(void)
 
 	printf("Max error: %f\n", maxError);
 	printf("Time to calculate: %3.2fms, this does not include any cpu time.\n",elapsed);
+	printf("Effective Bandwidth (GB/s): %f\n", N * 4 * 3 / elapsed / 1e6);
+
 
 	checkCuda(cudaEventDestroy(start));
 	checkCuda(cudaEventDestroy(stop));
