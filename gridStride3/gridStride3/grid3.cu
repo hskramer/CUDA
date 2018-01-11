@@ -88,6 +88,9 @@ int main(void)
 	printf("Max error: %f\n", maxError);
 	printf("Time to calculate: %3.2fms, this does not include any cpu time.\n", elapsed);
 
+	checkCuda(cudaEventDestroy(start));
+	checkCuda(cudaEventDestroy(stop));
+
 	cudaFree(x);
 	cudaFree(y);
 
