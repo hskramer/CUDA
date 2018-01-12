@@ -103,8 +103,13 @@ int main(void)
 	printf("Max error: %f\n", maxError);
 	printf("Time to calculate: %3.2fms, this does not include the time calculating the error\n", elapsed);
 
+
+	cublasDestroy(handle);
+	cudaFree(d_x);
+	cudaFree(d_y);
 	cudaFree(x);
 	cudaFree(y);
+
 
 	return 0;
 
